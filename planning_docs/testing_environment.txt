@@ -1,0 +1,40 @@
+TESTING
+
+- What do you want for the testing environment
+    - everything done on the laptop
+    
+    - initiate everything from the laptop and get all the results
+    on the laptop
+        - i do not want to ssh into any of the host to do the above
+    
+    - document the packet activities from the sender to the receiver
+    wihtout any rules applies
+
+    - test the various actions that iptables can do to filter/translate/
+    log packet activities
+
+    - a succeful test is when the expected results are seen on the
+    monitoring tool
+
+    - be able to setup the testing environment via code
+
+
+
+
+
+
+    - Where will packets travel? (solution must be able to be reached
+    by web server hosted locally)
+        - Docker Desktop / Portainer
+
+    - What kind of packets will I send?
+        - JPerf (GUI for iperf3)
+
+    - What behavior am I testing?
+        - ubuntu container
+    
+    - What happened to the packet? (must be able to be monitored 
+    remotely)
+        - Wireshark 
+
+    - Did the system behave correctly?

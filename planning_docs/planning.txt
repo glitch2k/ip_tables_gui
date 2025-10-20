@@ -1,0 +1,107 @@
+***** IP TABLES *****
+
+GOAL:
+    - an application to manage ip tables rules via a web interface
+
+MANUAL PROCESS:
+    - The user will have to know the following before hand:
+        - What is the system
+            - a host
+            - a device
+                - a router
+                - a firewall
+        
+        - What actions to perform on the packet
+            - Filtering/Blocking
+            - Translation
+                - SNAT
+                - DNAT
+                - Masquerading
+                - Port forwarding
+                - Modifying the packet header (mangle)
+            - Logging
+
+        - Where in the packet procss do you want the action to take
+        place
+            - Before "mine or yours" decision
+            - Before routing/forwarding decision
+            - Before packet is sent to the process
+            - After the process responces
+            - After routing/forwarding decision 
+            - Before packet is sent out the interface
+
+        - How to match the packet
+
+        - What IPTable specific action must be done
+
+    - Packet traffic scenario for manual process
+        - Host
+            - Host -> filter -> ...
+                - host -> filter -> Before "mine or yours" decision
+                - host -> filter -> Before routing/forwarding decision
+                - host -> filter -> Before packet is sent to the process
+                - host -> filter -> After the process responces
+                - host -> filter -> After routing/forwarding decision 
+                - host -> filter -> Before packet is sent out the interface
+
+            - Host -> Translation -> ...
+                - SNAT
+                    - host -> SNAT -> Before "mine or yours" decision
+                    - host -> SNAT -> Before routing/forwarding decision
+                    - host -> SNAT -> Before packet is sent to the process
+                    - host -> SNAT -> After the process responces
+                    - host -> SNAT -> After routing/forwarding decision 
+                    - host -> SNAT -> Before packet is sent out the interface
+                - DNAT
+                    - host -> DNAT -> Before "mine or yours" decision
+                    - host -> DNAT -> Before routing/forwarding decision
+                    - host -> DNAT -> Before packet is sent to the process
+                    - host -> DNAT -> After the process responces
+                    - host -> DNAT -> After routing/forwarding decision 
+                    - host -> DNAT -> Before packet is sent out the interface
+                - Masquerading
+                    - host -> Masquerading -> Before "mine or yours" decision
+                    - host -> Masquerading -> Before routing/forwarding decision
+                    - host -> Masquerading -> Before packet is sent to the process
+                    - host -> Masquerading -> After the process responces
+                    - host -> Masquerading -> After routing/forwarding decision 
+                    - host -> Masquerading -> Before packet is sent out the interface
+                - Port forwarding
+                    - host -> Port forwarding -> Before "mine or yours" decision
+                    - host -> Port forwarding -> Before routing/forwarding decision
+                    - host -> Port forwarding -> Before packet is sent to the process
+                    - host -> Port forwarding -> After the process responces
+                    - host -> Port forwarding -> After routing/forwarding decision 
+                    - host -> Port forwarding -> Before packet is sent out the interface
+                - Modifying the packet header (mangle)
+                    - host -> Modifying the packet header (mangle) -> Before "mine or yours" decision
+                    - host -> Modifying the packet header (mangle) -> Before routing/forwarding decision
+                    - host -> Modifying the packet header (mangle) -> Before packet is sent to the process
+                    - host -> Modifying the packet header (mangle) -> After the process responces
+                    - host -> Modifying the packet header (mangle) -> After routing/forwarding decision 
+                    - host -> Modifying the packet header (mangle) -> Before packet is sent out the interface
+
+            - Host -> Logging -> ...
+                - host -> Logging -> Before "mine or yours" decision
+                - host -> Logging -> Before routing/forwarding decision
+                - host -> Logging -> Before packet is sent to the process
+                - host -> Logging -> After the process responces
+                - host -> Logging -> After routing/forwarding decision 
+                - host -> Logging -> Before packet is sent out the interface
+
+TESTING
+    - Where will packets travel? (solution must be able to be reached
+    by web server hosted locally)
+        - Docker Desktop / Portainer
+
+    - What kind of packets will I send?
+        - JPerf (GUI for iperf3)
+
+    - What behavior am I testing?
+        - ubuntu container
+    
+    - What happened to the packet? (must be able to be monitored 
+    remotely)
+        - Wireshark 
+    - Did the system behave correctly?
+PROGRAMING LANGUAGE CONCEPTS NEEDED:
