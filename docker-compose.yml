@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  firewall:
+    build: 
+      context: .
+      dockerfile: ./firewall/Dockerfile
+    container_name: iptables_firewall
+    privileged: true
+    networks:
+      client_net:
+        ipv4_address: 10.10.0.20
+      server_net:
+        ipv4_address: 10.20.0.20
+    tty: true
+    volumes:
+      - ./app:/app
+      - ./db:/db
+
+  client:
+    image: alpine
+    container_name: client_box
+    command: sh -c "apk add curl iproute2 iputils && sleep infinity"
+    networks:
+      client_net:
+        ipv4_address: 10.10.0.10
+
+  server:
+    image: nginx:latest
+    container_name: web_server
+    networks:
+      server_net:
+        ipv4_address: 10.20.0.30
+
+networks:
+  client_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24
+  server_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.20.0.0/24
