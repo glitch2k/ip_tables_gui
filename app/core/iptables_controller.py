@@ -69,21 +69,64 @@ def delete_rule(chain: str, rule_params: list[str], table: str = "filter") -> st
     output = run_cmd(cmd)
     return f"🗑️ Rule removed from {table}/{chain}: {' '.join(rule_params)}\n{output}"
 
+def save_rules_to_json() -> None:
+    """
+    Export all iptables rules (filter, nat, mangle) to a JSON file.
+    The output of 'iptables-save' for each table is stored under db/config.json.
+    """
+    tables = ["filter", "nat", "mangle"]
+    data = {}
+
+    for table in tables:
+        print(f"💾 Saving table: {table} ...")
+        result = run_cmd(["iptables-save", "-t", table])
+        data[table] = result
+
+    CONFIG_PATH.write_text(json.dumps(data, indent=2))
+    print(f"✅ All tables saved to {CONFIG_PATH}")
+
+
+def load_rules_from_json() -> None:
+    """
+    Restore iptables rules from db/config.json using 'iptables-restore'.
+    Each table's ruleset is loaded back into the kernel.
+    """
+    if not CONFIG_PATH.exists():
+        print("⚠️ No saved configuration found!")
+        return
+
+    print(f"📂 Loading rules from {CONFIG_PATH} ...")
+    data = json.loads(CONFIG_PATH.read_text())
+
+    for table, ruleset in data.items():
+        print(f"🔄 Restoring table: {table} ...")
+        process = subprocess.run(["iptables-restore"], input=ruleset, text=True)
+        if process.returncode == 0:
+            print(f"✅ Successfully restored {table} table")
+        else:
+            print(f"❌ Failed to restore {table} table")
+
+    print("🎯 Firewall configuration restored from JSON")
+
+
 
 if __name__ == "__main__":
-    print("🔹 Listing existing rules...")
-    print(list_rules())
-
-    print("\n🔹 Adding test rule (allow ICMP)...")
+    print("\n🔹 Adding a test rule (ICMP)...")
     print(add_rule("INPUT", ["-p", "icmp", "-j", "ACCEPT"]))
 
-    print("\n🔹 Verifying rules after addition...")
+    print("\n💾 Saving current rules to JSON...")
+    save_rules_to_json()
+
+    print("\n🗑️ Flushing all rules to simulate a reset...")
+    run_cmd(["iptables", "-F"])
+
+    print("\n🔍 Rules after flush (should be empty):")
     print(list_rules())
 
-    print("\n🔹 Deleting test rule (remove ICMP)...")
-    print(delete_rule("INPUT", ["-p", "icmp", "-j", "ACCEPT"]))
+    print("\n📂 Restoring rules from JSON...")
+    load_rules_from_json()
 
-    print("\n🔹 Final rule list...")
+    print("\n✅ Rules after restore (should show ICMP rule again):")
     print(list_rules())
 
 
