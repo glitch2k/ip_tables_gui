@@ -1,0 +1,3 @@
+*filter
+-A INPUT -p icmp -j ACCEPT
+COMMIT
