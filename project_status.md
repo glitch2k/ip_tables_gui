@@ -128,60 +128,74 @@ Develop a Python-based backend engine capable of directly managing local iptable
 
 ---
 
-## 🌐 **Phase 3 – Remote Connectivity Layer**
+## 🌐 **Phase 3 – Remote Connectivity Layer (Agentless SSH Model)**
 
 ### 🎯 **Goal**
-Extend the backend to manage **remote firewalls** using a **RESTful API agent architecture** (with optional SSH fallback).
+Enable the backend to manage **remote firewalls** securely **without deploying agents**,  
+by using authenticated SSH sessions to execute `iptables` commands remotely and return structured JSON results.
+
+---
 
 ### 🧩 **Milestones**
 
-- [x] **Milestone 1: Remote Controller Setup** *(In Progress)*  
+- [x] **Milestone 1: Remote Controller Setup**
   - [x] Create `app/core/remote_controller.py`.  
-  - [ ] Install and configure Flask/FastAPI-based agent template.  
-  - [ ] Implement secure communication with authentication (JWT/API key).  
-  - [ ] Test connection validation and health endpoint (`/api/status`).  
+  - [x] Install and verify the `paramiko` SSH library.  
+  - [x] Configure SSH key-based authentication between controller and remote firewall(s).  
+  - [ ] Implement connection-testing utility (`test_ssh_connection(host, user, key_path)`).  
+  - [ ] Validate connectivity to a test firewall container (e.g., `iptables_remote`).  
   🟡 **Status:** In Progress.
 
 ---
 
 - [ ] **Milestone 2: Remote Command Execution**
-  - [ ] Implement `run_remote_cmd()` to send JSON requests to remote agent endpoints.  
-  - [ ] Validate command output and error handling between controller and agent.  
+  - [ ] Implement `run_remote_cmd(host, user, key_path, cmd)` to open an SSH session and execute `iptables` commands.  
+  - [ ] Add structured parsing for `stdout`, `stderr`, and exit codes.  
+  - [ ] Include JSON-formatted return output for GUI and logs.  
+  - [ ] Test remote listing of rules (`iptables -L`) through SSH.  
   ⏳ **Status:** Pending development.
 
 ---
 
 - [ ] **Milestone 3: Remote Rule Management**
-  - [ ] Add remote versions of rule functions:
-    - [ ] `remote_list_rules()`
-    - [ ] `remote_add_rule()`
-    - [ ] `remote_delete_rule()`
-  - [ ] Confirm behavior mirrors local backend operations.  
+  - [ ] Build high-level functions that wrap `run_remote_cmd()`:
+    - [ ] `remote_list_rules(table)`
+    - [ ] `remote_add_rule(chain, params, table)`
+    - [ ] `remote_delete_rule(chain, params, table)`
+  - [ ] Ensure identical behavior to local backend functions.  
+  - [ ] Validate by adding and deleting rules on multiple remote firewalls.  
   ⏳ **Status:** Pending development.
 
 ---
 
 - [ ] **Milestone 4: Remote Persistence Layer**
-  - [ ] Implement remote save/restore endpoints via API.  
-  - [ ] Enable centralized configuration management across multiple nodes.  
+  - [ ] Extend backend to save and restore configurations remotely:
+    - [ ] `remote_save_rules_to_json()`
+    - [ ] `remote_load_rules_from_json()`
+  - [ ] Transfer JSON snapshots over SFTP using `paramiko.SFTPClient`.  
+  - [ ] Confirm end-to-end persistence (Add → Save → Flush → Restore → Verify).  
   ⏳ **Status:** Pending development.
 
 ---
 
 - [ ] **Milestone 5: Automated Remote Test Harness**
   - [ ] Create `tests/test_remote_backend.py`.  
-  - [ ] Automate connection + rule lifecycle tests for remote firewalls.  
+  - [ ] Automate SSH connection → Add → Save → Flush → Restore → Verify sequence.  
+  - [ ] Capture timing, connection reliability, and rule integrity statistics.  
   ⏳ **Status:** Pending development.
 
 ---
 
 ### 🧠 **Phase 3 Summary (Target Outcome)**
 ✅ Once completed:
-- [ ] The backend can communicate with distributed firewalls through HTTPS/JSON.  
-- [ ] Each remote firewall runs a small **API agent** handling rule operations locally.  
-- [ ] The GUI and backend share the same REST-based communication model.
+- [ ] Controller connects to any remote firewall securely via SSH (key-based).  
+- [ ] Executes all iptables operations agentlessly.  
+- [ ] Supports configuration backup and restore over SFTP.  
+- [ ] Provides unified interface for both local and remote rule management.  
 
----
+🔹 **Outcome:**  
+A fully agentless, SSH-driven remote control layer — minimal footprint on firewalls,  
+centralized orchestration from the backend, and complete parity with local iptables operations.
 
 ## 🖥️ **Phase 4 – GUI Frontend Integration**
 

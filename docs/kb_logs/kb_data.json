@@ -1,0 +1,69 @@
+[
+    {
+  "date": "2025-10-22",
+  "project": "iptables_gui_project",
+  "phase": "Phase 3 - Remote Connectivity (SSH Agentless Communication)",
+  "milestone": "Milestone 1 - Establish SSH Connectivity Between Host and Firewall Container",
+  "issues": [
+    {
+      "id": "P3M1-001",
+      "title": "Docker group not recognized after installation",
+      "symptom": "User not part of the docker group; running docker commands required sudo and caused permission errors.",
+      "root_cause": "User was not successfully added to the 'docker' group using $USER variable; group update didn’t persist.",
+      "solution": "Used 'sudo usermod -aG docker <username>' instead of 'sudo usermod -aG docker $USER' and re-logged into the session."
+    },
+    {
+      "id": "P3M1-002",
+      "title": "Client container unable to ping firewall container",
+      "symptom": "Ping test returned 'Destination Host Unreachable' and 'No route to host' messages.",
+      "root_cause": "The Docker network 'ip_tables_gui_iptables_net' was not assigning IPs correctly due to overlapping or stale networks.",
+      "solution": "Removed all old networks with 'sudo docker network prune -f', manually recreated the network using 'sudo docker network create --subnet=10.10.0.0/24 ip_tables_gui_iptables_net', and relaunched the containers."
+    },
+    {
+      "id": "P3M1-003",
+      "title": "authorized_keys mounted as directory instead of file",
+      "symptom": "Inside firewall container, '/root/.ssh/authorized_keys' was a directory instead of a file.",
+      "root_cause": "The Docker volume mount path pointed to a non-existent file, causing Docker to create a directory automatically.",
+      "solution": "Hardcoded the full path to the SSH public key file in 'docker-compose.yml' and ensured the source file exists on the host before mounting."
+    },
+    {
+      "id": "P3M1-004",
+      "title": "SSH 'Permission denied (publickey)' despite correct mount",
+      "symptom": "SSH login from host failed even though authorized_keys file existed in container.",
+      "root_cause": "File ownership and permissions were incorrect (UID 1000 instead of root, and file world-readable).",
+      "solution": "Ran 'chown root:root /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys' inside the firewall container to enforce correct SSH permissions."
+    },
+    {
+      "id": "P3M1-005",
+      "title": "SSH configuration not applied",
+      "symptom": "sshd ignored key-based authentication and continued denying access.",
+      "root_cause": "Multiple conflicting or commented lines existed in /etc/ssh/sshd_config, causing ambiguous behavior.",
+      "solution": "Ensured the active lines were 'PubkeyAuthentication yes', 'PasswordAuthentication no', and 'PermitRootLogin yes'; restarted sshd using 'service ssh restart'."
+    },
+    {
+      "id": "P3M1-006",
+      "title": "Networking: Host could not SSH directly to container IP",
+      "symptom": "Host returned 'No route to host' when trying to reach container's 10.10.0.20 address.",
+      "root_cause": "Docker bridge network is isolated from host routing table by design.",
+      "solution": "Explained Docker networking topology; recommended using port mapping (e.g., '2222:22') or manually adding a host route to the Docker subnet."
+    },
+    {
+      "id": "P3M1-007",
+      "title": "File permissions on authorized_keys reset after reboot",
+      "symptom": "After system reboot or 'docker-compose up', file permissions reverted to 644 and UID 1000.",
+      "root_cause": "Docker volume remounts host file ownership/mode at startup, overwriting any changes inside container.",
+      "solution": "Implemented startup fix script 'fix_ssh_perms.sh' in container to automatically correct permissions on boot, ensuring consistent SSH access."
+    }
+  ],
+  "summary": {
+    "status": "Resolved",
+    "key_outcome": "SSH connectivity between host and firewall container successfully established. Permissions and network configuration persist across reboots. Future containers will include automated permission correction via startup script.",
+    "next_steps": [
+      "Integrate agentless API logic for remote iptables command execution.",
+      "Extend SSH-based control from host to client container (simulating remote controller).",
+      "Begin documenting reusable troubleshooting KB entries daily."
+    ]
+  }
+}
+
+]
