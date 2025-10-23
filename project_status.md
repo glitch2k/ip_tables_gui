@@ -176,96 +176,157 @@ Backend now functions as an **agentless controller**, capable of managing multip
 
 **Next Phase:** Phase 4 – Remote Configuration Management over SSH
 
-## 🖥️ **Phase 4 – GUI Frontend Integration**
+## **Phase 4 – Remote Configuration Management over SSH**
 
-### 🎯 **Goal**
-Develop a user-friendly web-based interface that interacts with the backend for managing firewall rules and configurations.
-
-### 🧩 **Milestones**
-- [ ] **Frontend Framework Setup**
-  - [ ] Choose tech stack (Flask + Jinja2 or React + Flask API).  
-  - [ ] Establish routing, templates, and static assets.  
-
-- [ ] **Firewall Dashboard View**
-  - [ ] Display connected firewalls, rule tables, and status.  
-
-- [ ] **Rule Management UI**
-  - [ ] Add, delete, and view rules visually.  
-  - [ ] Interactive table view synced with backend JSON data.  
-
-- [ ] **Configuration Persistence**
-  - [ ] Add buttons for "Save Config" and "Restore Config".  
-
-- [ ] **Remote Node Management**
-  - [ ] Add multi-node dropdown and status indicators.  
-
-⏳ **Status:** Planned.
+### 🎯 Goal  
+Remotely manage iptables configurations on any discovered host using secure SSH sessions.  
+Support rule deployment, syntax validation, backups, and safe rollbacks without requiring local agents.
 
 ---
 
-## 🧪 **Phase 5 – Integration & System Testing**
-
-### 🎯 **Goal**
-Combine all modules (local backend, remote agent, and GUI) and perform full integration testing.
-
-### 🧩 **Milestones**
-- [ ] **Unified API Testing**
-  - [ ] Ensure consistency between local and remote commands.  
-
-- [ ] **Functional Testing**
-  - [ ] Validate all rule operations from GUI end-to-end.  
-
-- [ ] **Performance Testing**
-  - [ ] Simulate multiple remote firewalls and measure latency.  
-
-- [ ] **Error Handling & Logging**
-  - [ ] Verify stability during failed API calls or invalid inputs.  
-
-- [ ] **User Feedback Loop**
-  - [ ] Refine UI based on real-world interaction.
-
-⏳ **Status:** Planned.
+### **Milestone 1 – Remote Ruleset Push**
+- [ ] Step 1 – Create `iptables_push.py` utility to upload iptables rulesets via SFTP  
+- [ ] Step 2 – Implement syntax validation before applying rules  
+- [ ] Step 3 – Apply uploaded rules remotely using `iptables-restore`  
+- [ ] Step 4 – Log all actions and confirmation messages to central KB  
 
 ---
 
-## ☁️ **Phase 6 – Deployment & Monitoring**
-
-### 🎯 **Goal**
-Prepare the application for real-world deployment with monitoring, security, and scalability in mind.
-
-### 🧩 **Milestones**
-- [ ] **Containerization & Packaging**
-  - [ ] Dockerize the controller and agent components separately.  
-  - [ ] Push images to Docker Hub or private registry.  
-
-- [ ] **Secure Deployment**
-  - [ ] Enable HTTPS, API key protection, and firewall policies for the agent.  
-
-- [ ] **Logging & Monitoring**
-  - [ ] Integrate centralized logging (e.g., ELK or Grafana + Promtail).  
-
-- [ ] **Documentation & User Manual**
-  - [ ] Finalize setup instructions, diagrams, and troubleshooting guides.  
-
-- [ ] **Version Tagging & Release**
-  - [ ] Create stable release tags (v1.0, v2.0) and changelog.
-
-⏳ **Status:** Future Phase.
+### **Milestone 2 – Ruleset Backup and Version Tracking**
+- [ ] Step 1 – Create `iptables_backup.py` to remotely run `iptables-save` and retrieve output  
+- [ ] Step 2 – Store backups with timestamped filenames in `logs/backups/`  
+- [ ] Step 3 – Implement diff comparison between latest backup and current state  
+- [ ] Step 4 – Maintain JSON index of versions per host  
 
 ---
 
-## 📊 **Overall Project Summary**
-
-| Phase | Name | Status | Key Outcome |
-|--------|------|--------|--------------|
-| [x] **1** | Environment & Infrastructure | ✅ Completed | Functional 3-node Docker lab |
-| [x] **2** | Backend MVP | ✅ Completed | Dynamic rule management + JSON persistence |
-| [ ] **3** | Remote Connectivity | 🟡 In Progress | Distributed API/Agent architecture |
-| [ ] **4** | GUI Frontend | ⏳ Planned | Web-based user interface |
-| [ ] **5** | Integration & Testing | ⏳ Planned | Unified validation and performance testing |
-| [ ] **6** | Deployment & Monitoring | ⏳ Planned | Containerized and secure system rollout |
+### **Milestone 3 – Configuration Rollback / Restore**
+- [ ] Step 1 – Add restore logic using previously saved backups  
+- [ ] Step 2 – Verify restored rules match selected backup hash  
+- [ ] Step 3 – Add safety rollback if restore fails mid-process  
+- [ ] Step 4 – Record rollback outcome in structured log  
 
 ---
 
-✅ **In One Line:**  
-> The IPTables GUI project has successfully completed its local backend foundation and is now transitioning into a distributed, API-driven architecture with planned GUI integration, testing, and secure deployment phases.
+### **Milestone 4 – Validation and Compliance Checks**
+- [ ] Step 1 – Compare active iptables rules against baseline templates  
+- [ ] Step 2 – Detect missing, extra, or modified rules  
+- [ ] Step 3 – Generate compliance report per host (JSON summary)  
+- [ ] Step 4 – Include compliance data in KB for GUI reporting  
+
+---
+
+### **Milestone 5 – Audit Log Consolidation**
+- [ ] Step 1 – Merge SSH command logs, discovery logs, and config logs into unified JSON  
+- [ ] Step 2 – Add tagging by phase, host, and operation type  
+- [ ] Step 3 – Generate daily summary files in `logs/audit/`  
+- [ ] Step 4 – Validate integrity and readability for GUI integration  
+
+---
+
+### ✅ **Phase 4 Summary (target outcome)**
+Backend fully manages remote iptables configurations:  
+- Push / validate / apply / backup / restore rules remotely  
+- Version-controlled and auditable change tracking  
+- Compliance validation and JSON-based audit records
+---
+
+## **Phase 5 – API Layer and GUI Integration**
+
+### 🎯 Goal  
+Expose backend capabilities through a RESTful API and connect them to a lightweight GUI frontend.
+
+---
+
+### **Milestone 1 – Flask API Layer**
+- [ ] Step 1 – Create Flask app skeleton with endpoints for all major backend operations  
+- [ ] Step 2 – Integrate `remote_command_executor`, `ssh_session_manager`, and file-transfer modules  
+- [ ] Step 3 – Add input validation, token-based authentication, and rate limiting  
+- [ ] Step 4 – Return all responses as structured JSON objects  
+
+---
+
+### **Milestone 2 – GUI Frontend (Phase 1)**
+- [ ] Step 1 – Develop base HTML/JS interface for testing API endpoints  
+- [ ] Step 2 – Add sections for connection status, host discovery, and command output  
+- [ ] Step 3 – Include upload/download panels for firewall rules  
+- [ ] Step 4 – Implement “Apply Ruleset” and “Backup Rules” buttons with live logs  
+
+---
+
+### **Milestone 3 – GUI Frontend (Phase 2)**
+- [ ] Step 1 – Enhance layout with live charts and log viewers  
+- [ ] Step 2 – Integrate compliance and audit data visualization  
+- [ ] Step 3 – Add host summary dashboard with status indicators  
+- [ ] Step 4 – Finalize styling and usability testing  
+
+---
+
+### ✅ **Phase 5 Summary (target outcome)**
+End-to-end system with API endpoints and an interactive web interface that performs all SSH-based management functions from a browser.
+
+---
+
+## **Phase 6 – Knowledge Base and Analytics**
+
+### 🎯 Goal  
+Aggregate logs, discovery data, and configuration results into a searchable local knowledge base and provide analytic summaries.
+
+---
+
+### **Milestone 1 – Central Log Aggregator**
+- [ ] Step 1 – Merge all JSON logs (SSH, discovery, config) into a unified data store  
+- [ ] Step 2 – Implement daily rollover and compression  
+- [ ] Step 3 – Build lightweight CLI to query entries by host, phase, or keyword  
+
+---
+
+### **Milestone 2 – Data Analytics & Reports**
+- [ ] Step 1 – Parse historical logs for patterns and uptime statistics  
+- [ ] Step 2 – Generate trend charts (success/failure rates, latency averages)  
+- [ ] Step 3 – Export CSV/JSON summaries for GUI visualization  
+
+---
+
+### **Milestone 3 – Knowledge Base Search**
+- [ ] Step 1 – Implement simple text-search and filtering over stored logs  
+- [ ] Step 2 – Add tagging and categorization (phase, milestone, step)  
+- [ ] Step 3 – Enable export of filtered datasets for future training or audit  
+
+---
+
+### ✅ **Phase 6 Summary (target outcome)**
+A searchable, structured knowledge base and analytics engine that transforms raw logs into actionable insights for both debugging and compliance review.
+
+---
+
+## **Phase 7 – Deployment and Maintenance**
+
+### 🎯 Goal  
+Prepare the system for real-world deployment, ensuring reliability, maintainability, and user accessibility.
+
+---
+
+### **Milestone 1 – Containerized Deployment**
+- [ ] Step 1 – Create production `docker-compose` for backend + GUI  
+- [ ] Step 2 – Add persistent volumes for logs, configs, and backups  
+- [ ] Step 3 – Implement environment-variable configuration for SSH credentials and ports  
+
+---
+
+### **Milestone 2 – Documentation and Testing**
+- [ ] Step 1 – Finalize developer and user documentation in `/docs`  
+- [ ] Step 2 – Build automated tests for all API endpoints and SSH workflows  
+- [ ] Step 3 – Conduct load and reliability testing under multi-host conditions  
+
+---
+
+### **Milestone 3 – Long-Term Maintenance**
+- [ ] Step 1 – Implement auto-backup schedule for configs/logs  
+- [ ] Step 2 – Add update mechanism for iptables templates  
+- [ ] Step 3 – Establish periodic cleanup and archive rotation  
+
+---
+
+### ✅ **Phase 7 Summary (target outcome)**
+A production-ready, maintainable iptables management suite with full GUI, API, analytics, and automated deployment support.
