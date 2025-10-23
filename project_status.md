@@ -128,74 +128,53 @@ Develop a Python-based backend engine capable of directly managing local iptable
 
 ---
 
-## 🌐 **Phase 3 – Remote Connectivity Layer (Agentless SSH Model)**
+## **Phase 3 – SSH Agentless Connectivity**
 
-### 🎯 **Goal**
-Enable the backend to manage **remote firewalls** securely **without deploying agents**,  
-by using authenticated SSH sessions to execute `iptables` commands remotely and return structured JSON results.
-
----
-
-### 🧩 **Milestones**
-
-- [x] **Milestone 1: Remote Controller Setup**
-  - [x] Create `app/core/remote_controller.py`.  
-  - [x] Install and verify the `paramiko` SSH library.  
-  - [x] Configure SSH key-based authentication between controller and remote firewall(s).  
-  - [ ] Implement connection-testing utility (`test_ssh_connection(host, user, key_path)`).  
-  - [ ] Validate connectivity to a test firewall container (e.g., `iptables_remote`).  
-  🟡 **Status:** In Progress.
+### 🎯 Goal  
+Enable secure, key-based, agentless SSH communication between the backend controller and multiple managed systems (firewall, client, and server containers).  
+Provide the ability to execute commands, transfer files, maintain sessions, and discover reachable hosts — all without local agents.
 
 ---
 
-- [ ] **Milestone 2: Remote Command Execution**
-  - [ ] Implement `run_remote_cmd(host, user, key_path, cmd)` to open an SSH session and execute `iptables` commands.  
-  - [ ] Add structured parsing for `stdout`, `stderr`, and exit codes.  
-  - [ ] Include JSON-formatted return output for GUI and logs.  
-  - [ ] Test remote listing of rules (`iptables -L`) through SSH.  
-  ⏳ **Status:** Pending development.
+### **Milestone 1 – Establish SSH Connectivity**
+- [x] Step 1 – Generate SSH key pair and configure authorized_keys on firewall  
+- [x] Step 2 – Verify key-based SSH login from host to firewall  
+- [x] Step 3 – Implement `test_ssh_connection.py` for backend connectivity verification  
+- [x] Step 4 – Validate connectivity logs and permissions fixes  
 
 ---
 
-- [ ] **Milestone 3: Remote Rule Management**
-  - [ ] Build high-level functions that wrap `run_remote_cmd()`:
-    - [ ] `remote_list_rules(table)`
-    - [ ] `remote_add_rule(chain, params, table)`
-    - [ ] `remote_delete_rule(chain, params, table)`
-  - [ ] Ensure identical behavior to local backend functions.  
-  - [ ] Validate by adding and deleting rules on multiple remote firewalls.  
-  ⏳ **Status:** Pending development.
+### **Milestone 2 – Remote Command Execution Framework**
+- [x] Step 1 – Create `remote_command_executor.py` to execute shell commands remotely  
+- [x] Step 2 – Add structured JSON logging for command execution results  
+- [x] Step 3 – Add command validation / whitelist safety controls  
+- [x] Step 4 – Confirm verified command output from firewall container  
+
+**Outcome:**  
+Backend can securely execute validated iptables or diagnostic commands on any SSH-reachable host and record structured results.
 
 ---
 
-- [ ] **Milestone 4: Remote Persistence Layer**
-  - [ ] Extend backend to save and restore configurations remotely:
-    - [ ] `remote_save_rules_to_json()`
-    - [ ] `remote_load_rules_from_json()`
-  - [ ] Transfer JSON snapshots over SFTP using `paramiko.SFTPClient`.  
-  - [ ] Confirm end-to-end persistence (Add → Save → Flush → Restore → Verify).  
-  ⏳ **Status:** Pending development.
+### **Milestone 3 – Multi-Host SSH Operations**
+- [x] Step 1 – Implement `multi_host_executor.py` for parallel SSH execution across multiple containers  
+- [x] Step 2 – Develop persistent `SSHSessionManager` for reusable connections  
+- [x] Step 3 – Enhance resilience with automatic retries + connection health metrics  
+- [x] Step 4 – Add `ssh_file_transfer.py` for SFTP upload / download of configs and logs  
+- [x] Step 5 – Add `host_discovery.py` for network reachability + SSH discovery  
+
+**Outcome:**  
+Backend now functions as an **agentless controller**, capable of managing multiple SSH hosts concurrently, transferring files, maintaining session pools, and discovering reachable nodes in the network.
 
 ---
 
-- [ ] **Milestone 5: Automated Remote Test Harness**
-  - [ ] Create `tests/test_remote_backend.py`.  
-  - [ ] Automate SSH connection → Add → Save → Flush → Restore → Verify sequence.  
-  - [ ] Capture timing, connection reliability, and rule integrity statistics.  
-  ⏳ **Status:** Pending development.
+### ✅ **Phase 3 Summary**
+- Fully operational SSH-based backend controller  
+- Persistent and resilient SSH session management  
+- Secure file transfer via shared sessions  
+- Multi-host parallel execution and discovery  
+- Centralized structured logging for all SSH actions  
 
----
-
-### 🧠 **Phase 3 Summary (Target Outcome)**
-✅ Once completed:
-- [ ] Controller connects to any remote firewall securely via SSH (key-based).  
-- [ ] Executes all iptables operations agentlessly.  
-- [ ] Supports configuration backup and restore over SFTP.  
-- [ ] Provides unified interface for both local and remote rule management.  
-
-🔹 **Outcome:**  
-A fully agentless, SSH-driven remote control layer — minimal footprint on firewalls,  
-centralized orchestration from the backend, and complete parity with local iptables operations.
+**Next Phase:** Phase 4 – Remote Configuration Management over SSH
 
 ## 🖥️ **Phase 4 – GUI Frontend Integration**
 
