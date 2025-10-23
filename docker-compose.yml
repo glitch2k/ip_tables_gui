@@ -178,6 +178,8 @@ services:
     networks:
       ip_tables_gui_iptables_net:
         ipv4_address: 10.10.0.30
+    volumes:
+      - /home/glitch/.ssh/id_rsa.pub:/root/.ssh/authorized_keys:ro
 
   server:
     build:
@@ -189,6 +191,8 @@ services:
     networks:
       ip_tables_gui_iptables_net:
         ipv4_address: 10.10.0.40
+    volumes:
+      - /home/glitch/.ssh/id_rsa.pub:/root/.ssh/authorized_keys:ro
 
 networks:
   ip_tables_gui_iptables_net:

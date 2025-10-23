@@ -86,5 +86,38 @@
         "stdout": "f84608988d08",
         "stderr": "",
         "message": "Command 'hostname' executed on 10.10.0.20 with exit code 0."
+    },
+    {
+        "timestamp": "2025-10-23T01:09:56.861342",
+        "phase": "3",
+        "milestone": "2",
+        "step": "3",
+        "status": "success",
+        "exit_code": 0,
+        "stdout": "19a28441a07a",
+        "stderr": "",
+        "message": "Command 'hostname' executed on 10.10.0.20 with exit code 0."
+    },
+    {
+        "timestamp": "2025-10-23T01:09:56.865404",
+        "phase": "3",
+        "milestone": "2",
+        "step": "3",
+        "status": "success",
+        "exit_code": 0,
+        "stdout": "97f13fd23dd6",
+        "stderr": "",
+        "message": "Command 'hostname' executed on 10.10.0.40 with exit code 0."
+    },
+    {
+        "timestamp": "2025-10-23T01:09:56.866435",
+        "phase": "3",
+        "milestone": "2",
+        "step": "3",
+        "status": "success",
+        "exit_code": 0,
+        "stdout": "c6ca68ce6ab9",
+        "stderr": "",
+        "message": "Command 'hostname' executed on 10.10.0.30 with exit code 0."
     }
 ]
