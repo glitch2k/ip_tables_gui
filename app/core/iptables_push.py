@@ -2,13 +2,10 @@
 Module: iptables_push
 Phase: 4
 Milestone: 1
-Step: 1
+Step: 1 (with KB logging)
 Purpose:
-    Upload iptables ruleset file to remote host via SSH using SFTP.
-    Prepares for later validation and apply stages.
-
-Usage:
-    python3 -m app.core.iptables_push
+    Upload iptables ruleset file to remote host via SSH using SFTP,
+    and log the action to the Knowledge Base.
 """
 
 from __future__ import annotations
@@ -16,6 +13,7 @@ import os
 from typing import Dict
 from app.core.ssh_file_transfer import SSHFileTransfer
 from app.core.ssh_session_manager import SSHSessionManager
+from app.core.iptables_logger import log_kb_entry
 
 
 def push_iptables_ruleset(
@@ -26,29 +24,20 @@ def push_iptables_ruleset(
     remote_rules_path: str = "/tmp/iptables.rules"
 ) -> Dict[str, str]:
     """
-    Upload iptables ruleset to remote host.
-
-    Args:
-        host (str): Remote host IP or hostname.
-        user (str): SSH username.
-        key_path (str): Path to private key file.
-        local_rules_path (str): Path to local rules file (e.g., ./iptables.rules).
-        remote_rules_path (str): Destination on remote host (default /tmp/iptables.rules).
-
-    Returns:
-        Dict[str, str]: JSON-style result message.
+    Upload iptables ruleset to remote host and log the result.
     """
     mgr = SSHSessionManager()
     xfer = SSHFileTransfer(mgr)
 
     if not os.path.exists(local_rules_path):
-        return {
+        result = {
             "status": "failure",
             "message": f"Local ruleset not found: {local_rules_path}",
         }
+        log_kb_entry("push", host, result)
+        return result
 
     print(f"📤 Uploading iptables ruleset to {host} ...")
-
     result = xfer.upload(
         host=host,
         user=user,
@@ -57,13 +46,14 @@ def push_iptables_ruleset(
         remote_path=remote_rules_path,
     )
 
+    log_kb_entry("push", host, result)
     mgr.stop()
     return result
 
 
 # ---------- Self-test ----------
 if __name__ == "__main__":
-    HOST = "10.10.0.20"  # firewall container
+    HOST = "10.10.0.20"
     USER = "root"
     KEY = "/home/glitch/.ssh/id_rsa"
     LOCAL_FILE = "./iptables.rules"

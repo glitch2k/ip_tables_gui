@@ -1,0 +1,5 @@
+{"timestamp": "2025-10-24T00:23:17.310112", "action": "push", "host": "10.10.0.20", "status": "success", "message": "Uploaded iptables.rules \u2192 10.10.0.20:/tmp/iptables.rules"}
+{"timestamp": "2025-10-24T00:23:21.316998", "action": "push", "host": "10.10.0.20", "status": "success", "message": "Uploaded iptables.rules \u2192 10.10.0.20:/tmp/iptables.rules"}
+{"timestamp": "2025-10-24T00:24:20.913666", "action": "validate", "host": "10.10.0.20", "status": "success", "message": "Syntax OK for /tmp/iptables.rules on 10.10.0.20"}
+{"timestamp": "2025-10-24T00:24:50.919604", "action": "validate", "host": "10.10.0.20", "status": "success", "message": "Syntax OK for /tmp/iptables.rules on 10.10.0.20"}
+{"timestamp": "2025-10-24T00:25:20.921138", "action": "apply", "host": "10.10.0.20", "status": "success", "message": "iptables rules applied successfully on 10.10.0.20"}

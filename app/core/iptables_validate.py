@@ -2,18 +2,16 @@
 Module: iptables_validate
 Phase: 4
 Milestone: 1
-Step: 2
+Step: 2 (with KB logging)
 Purpose:
     Validate uploaded iptables ruleset syntax on a remote host
-    using `iptables-restore --test`.
-
-Usage:
-    python3 -m app.core.iptables_validate
+    using `iptables-restore --test`, and log the results.
 """
 
 from __future__ import annotations
 from typing import Dict
 from app.core.ssh_session_manager import SSHSessionManager
+from app.core.iptables_logger import log_kb_entry
 
 
 def validate_iptables_rules(
@@ -23,36 +21,28 @@ def validate_iptables_rules(
     remote_rules_path: str = "/tmp/iptables.rules"
 ) -> Dict[str, str]:
     """
-    Run iptables syntax validation remotely.
-
-    Args:
-        host (str): Remote host IP or hostname.
-        user (str): SSH username.
-        key_path (str): Path to private key.
-        remote_rules_path (str): Path to uploaded rules file.
-
-    Returns:
-        Dict[str, str]: JSON-like result indicating validation status.
+    Run iptables syntax validation remotely and log the result.
     """
     mgr = SSHSessionManager()
     print(f"🧠 Validating iptables syntax on {host} ...")
 
-    # Test syntax without applying
     command = f"iptables-restore --test {remote_rules_path}"
     result = mgr.exec(host, user, key_path, command)
-
     mgr.stop()
 
     if result["status"] == "success":
-        return {
+        final = {
             "status": "success",
             "message": f"Syntax OK for {remote_rules_path} on {host}",
         }
     else:
-        return {
+        final = {
             "status": "failure",
             "message": f"Syntax error in ruleset: {result.get('stderr') or result.get('message')}",
         }
+
+    log_kb_entry("validate", host, final)
+    return final
 
 
 # ---------- Self-test ----------
