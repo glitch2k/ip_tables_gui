@@ -25,6 +25,18 @@ def api_status():
         "step": "1"
     })
 
+@app.route("/api/objective", methods=["POST"])
+def api_objective():
+    """
+    Temporary route to test Objective Selection from frontend.
+    """
+    data = request.get_json(force=True, silent=False)
+    return jsonify({
+        "status": "received",
+        "objective": data.get("objective"),
+        "action": data.get("action")
+    })
+
 if __name__ == "__main__":
     print("🚀 Starting iptables GUI backend...")
     app.run(host="0.0.0.0", port=5000, debug=True)

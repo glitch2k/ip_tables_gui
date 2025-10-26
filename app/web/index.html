@@ -14,16 +14,77 @@
 </head>
 <body>
   <h1>iptables GUI (Phase 5)</h1>
-  <p>This is the base frontend page for your iptables configuration interface.</p>
-  <button id="check">Check Backend Connection</button>
-  <pre id="output">{}</pre>
+  <p>This GUI helps define your iptables configuration objectives step by step.</p>
 
-<script>
-document.getElementById("check").addEventListener("click", async () => {
-  const res = await fetch("/api/status");
-  const data = await res.json();
-  document.getElementById("output").textContent = JSON.stringify(data, null, 2);
-});
-</script>
+  <!-- ========== STEP 2: OBJECTIVE SELECTION PANEL ========== -->
+  <section style="margin-top: 2rem; padding: 1rem; background: #1e293b; border-radius: 10px;">
+    <h2 style="color: #38bdf8;">1️⃣ Select Firewall Objective</h2>
+    <p style="color: #94a3b8;">Choose what you want the firewall to do with packets.</p>
+
+    <label><strong>Main Objective:</strong></label>
+    <select id="objective" style="width: 100%; padding: 8px; border-radius: 6px; margin-top: 5px;">
+      <option value="">-- Select --</option>
+      <option value="filter">Packet Filtering (ACCEPT, DROP, REJECT)</option>
+      <option value="translate">Address Translation (SNAT, DNAT, MASQUERADE)</option>
+      <option value="log">Logging (Record Packet Info)</option>
+    </select>
+
+    <div id="suboptions" style="margin-top: 1rem; display:none;">
+      <label><strong>Action/Target:</strong></label>
+      <select id="action" style="width: 100%; padding: 8px; border-radius: 6px;">
+        <option value="">-- Select an action --</option>
+      </select>
+    </div>
+
+    <button id="submitObjective" style="margin-top: 1rem; background: #334155; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer;">
+      Submit Objective
+    </button>
+
+    <pre id="objectiveResult" style="background:#0f172a; padding:10px; border-radius:8px; margin-top:1rem;">{}</pre>
+  </section>
+
+  <script>
+  const objectiveSelect = document.getElementById("objective");
+  const suboptionsDiv = document.getElementById("suboptions");
+  const actionSelect = document.getElementById("action");
+  const resultBox = document.getElementById("objectiveResult");
+
+  const optionsMap = {
+    filter: ["ACCEPT", "DROP", "REJECT"],
+    translate: ["SNAT", "DNAT", "MASQUERADE"],
+    log: ["LOG", "ULOG"]
+  };
+
+  objectiveSelect.addEventListener("change", () => {
+    const selected = objectiveSelect.value;
+    actionSelect.innerHTML = "";
+    if (!selected) {
+      suboptionsDiv.style.display = "none";
+      return;
+    }
+    suboptionsDiv.style.display = "block";
+    optionsMap[selected].forEach(opt => {
+      const o = document.createElement("option");
+      o.value = opt.toLowerCase();
+      o.textContent = opt;
+      actionSelect.appendChild(o);
+    });
+  });
+
+  document.getElementById("submitObjective").addEventListener("click", async () => {
+    const data = {
+      objective: objectiveSelect.value,
+      action: actionSelect.value
+    };
+    const res = await fetch("/api/objective", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    resultBox.textContent = JSON.stringify(json, null, 2);
+  });
+  </script>
 </body>
+
 </html>
