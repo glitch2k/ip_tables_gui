@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iptables GUI Project Status Tracker</title>
+<style>
+  body {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 30px;
+    background: #f8f9fa;
+    color: #212529;
+  }
+  h1, h2 {
+    color: #0d6efd;
+  }
+  details {
+    margin-bottom: 1em;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  summary {
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.5em;
+  }
+  th, td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background: #e9ecef;
+  }
+  input[type=checkbox] {
+    width: 18px;
+    height: 18px;
+  }
+  .completed {
+    background: #d1e7dd;
+  }
+  .inprogress {
+    background: #fff3cd;
+  }
+  .pending {
+    background: #f8d7da;
+  }
+</style>
+</head>
+<body>
+<h1>iptables GUI Project Status Tracker</h1>
+<p><em>Interactive version of the Markdown project status file with collapsible sections and checkboxes.</em></p>
+
+<!-- Phase 1 -->
+<details open>
+  <summary>Phase 1 – Dockerized Testing Environment Setup</summary>
+  <ul>
+    <li><input type="checkbox" checked> Build Docker environment with client, server, and firewall containers</li>
+    <li><input type="checkbox" checked> Verify container networking and interconnectivity</li>
+    <li><input type="checkbox" checked> Validate SSH connectivity between containers</li>
+    <li><input type="checkbox" checked> Install required tools (ping, iptables, etc.)</li>
+  </ul>
+</details>
+
+<!-- Phase 2 -->
+<details>
+  <summary>Phase 2 – Local iptables Configuration Control</summary>
+  <ul>
+    <li><input type="checkbox" checked> Create and test local iptables configuration files</li>
+    <li><input type="checkbox" checked> Verify packet flow and chain logic</li>
+    <li><input type="checkbox" checked> Confirm rule persistence on restart</li>
+  </ul>
+</details>
+
+<!-- Phase 3 -->
+<details>
+  <summary>Phase 3 – SSH Agentless Connectivity</summary>
+
+  <details>
+    <summary>Milestone 1 – Establish SSH Connectivity</summary>
+    <ul>
+      <li><input type="checkbox" checked> Generate SSH key pair and configure authorized_keys on firewall</li>
+      <li><input type="checkbox" checked> Verify key-based SSH login from host to firewall</li>
+      <li><input type="checkbox" checked> Implement test_ssh_connection.py for backend connectivity verification</li>
+      <li><input type="checkbox" checked> Validate connectivity logs and permissions fixes</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Milestone 2 – Remote Command Execution Framework</summary>
+    <ul>
+      <li><input type="checkbox" checked> Create remote_command_executor.py to execute shell commands remotely</li>
+      <li><input type="checkbox" checked> Add structured JSON logging for command execution results</li>
+      <li><input type="checkbox" checked> Add command validation / whitelist safety controls</li>
+      <li><input type="checkbox" checked> Confirm verified command output from firewall container</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Milestone 3 – Multi-Host SSH Operations</summary>
+    <ul>
+      <li><input type="checkbox" checked> Implement multi_host_executor.py for parallel SSH execution</li>
+      <li><input type="checkbox" checked> Develop persistent SSHSessionManager for reusable connections</li>
+      <li><input type="checkbox" checked> Enhance resilience with automatic retries + connection health metrics</li>
+      <li><input type="checkbox" checked> Add ssh_file_transfer.py for SFTP upload/download of configs</li>
+      <li><input type="checkbox" checked> Add host_discovery.py for network reachability and SSH discovery</li>
+    </ul>
+  </details>
+</details>
+
+<!-- Phase 4 -->
+<details>
+  <summary>Phase 4 – Remote Configuration Management over SSH</summary>
+
+  <details open>
+    <summary>Milestone 1 – Remote Ruleset Push</summary>
+    <ul>
+      <li><input type="checkbox" checked> Create iptables_push.py to upload iptables rulesets via SFTP</li>
+      <li><input type="checkbox" checked> Implement syntax validation before applying rules</li>
+      <li><input type="checkbox" checked> Apply uploaded rules remotely using iptables-restore</li>
+      <li><input type="checkbox" checked> Log all actions and confirmation messages to central KB</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Milestone 2 – Ruleset Backup and Version Tracking</summary>
+    <ul>
+      <li><input type="checkbox"> Create iptables_backup.py to remotely run iptables-save and retrieve output</li>
+      <li><input type="checkbox"> Store backups with timestamped filenames in logs/backups/</li>
+      <li><input type="checkbox"> Implement diff comparison between latest backup and current state</li>
+      <li><input type="checkbox"> Maintain JSON index of versions per host</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Milestone 3 – Configuration Rollback / Restore</summary>
+    <ul>
+      <li><input type="checkbox"> Add restore logic using previously saved backups</li>
+      <li><input type="checkbox"> Verify restored rules match selected backup hash</li>
+      <li><input type="checkbox"> Add safety rollback if restore fails mid-process</li>
+      <li><input type="checkbox"> Record rollback outcome in structured log</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Milestone 4 – Validation and Compliance Checks</summary>
+    <ul>
+      <li><input type="checkbox"> Compare active iptables rules against baseline templates</li>
+      <li><input type="checkbox"> Detect missing, extra, or modified rules</li>
+      <li><input type="checkbox"> Generate compliance report per host (JSON summary)</li>
+      <li><input type="checkbox"> Include compliance data in KB for GUI reporting</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Milestone 5 – Audit Log Consolidation</summary>
+    <ul>
+      <li><input type="checkbox"> Merge SSH command logs, discovery logs, and config logs into unified JSON</li>
+      <li><input type="checkbox"> Add tagging by phase, host, and operation type</li>
+      <li><input type="checkbox"> Generate daily summary files in logs/audit/</li>
+      <li><input type="checkbox"> Validate integrity and readability for GUI integration</li>
+    </ul>
+  </details>
+</details>
+
+<!-- Phase 5 -->
+<details open>
+  <summary>Phase 5 – API Layer and GUI Integration</summary>
+
+  <details open>
+    <summary>Milestone 1 – Flask API Layer</summary>
+    <ul>
+      <li><input type="checkbox" checked> Create Flask app skeleton with endpoints for core functions</li>
+      <li><input type="checkbox"> Integrate authentication and token security</li>
+      <li><input type="checkbox"> Add input validation and rate limiting</li>
+      <li><input type="checkbox"> Return structured JSON responses for GUI use</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Milestone 2 – GUI Frontend (Phase 1)</summary>
+    <ul>
+      <li><input type="checkbox"> Develop base HTML/JS interface for testing API endpoints</li>
+      <li><input type="checkbox"> Add sections for connection status, host discovery, and command output</li>
+      <li><input type="checkbox"> Include upload/download panels for firewall rules</li>
+      <li><input type="checkbox"> Implement “Apply Ruleset” and “Backup Rules” buttons with live logs</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary>Milestone 3 – GUI Frontend (Phase 2)</summary>
+    <ul>
+      <li><input type="checkbox"> Enhance layout with live charts and log viewers</li>
+      <li><input type="checkbox"> Integrate compliance and audit data visualization</li>
+      <li><input type="checkbox"> Add host summary dashboard with status indicators</li>
+      <li><input type="checkbox"> Finalize styling and usability testing</li>
+    </ul>
+  </details>
+</details>
+
+<!-- Phase 6 -->
+<details>
+  <summary>Phase 6 – Knowledge Base and Analytics</summary>
+  <ul>
+    <li><input type="checkbox"> Merge all JSON logs into unified data store</li>
+    <li><input type="checkbox"> Implement daily rollover and compression</li>
+    <li><input type="checkbox"> Build lightweight CLI for KB queries</li>
+    <li><input type="checkbox"> Parse historical logs for uptime and error statistics</li>
+    <li><input type="checkbox"> Implement search and filtering by phase/milestone</li>
+  </ul>
+</details>
+
+<!-- Phase 7 -->
+<details>
+  <summary>Phase 7 – Deployment and Maintenance</summary>
+  <ul>
+    <li><input type="checkbox"> Create production Docker Compose for backend + GUI</li>
+    <li><input type="checkbox"> Add persistent volumes for logs and configs</li>
+    <li><input type="checkbox"> Finalize documentation and user guides</li>
+    <li><input type="checkbox"> Implement automated backups and update scheduler</li>
+  </ul>
+</details>
+
+</body>
+</html>

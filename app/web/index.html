@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>iptables GUI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font-family: Arial, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 2rem; }
+  h1 { color: #38bdf8; }
+  button { padding: 10px 14px; background: #1e293b; color: white; border: none; border-radius: 6px; cursor: pointer; }
+  button:hover { background: #334155; }
+  pre { background: #1e293b; padding: 1rem; border-radius: 6px; color: #a5f3fc; }
+</style>
+</head>
+<body>
+  <h1>iptables GUI (Phase 5)</h1>
+  <p>This is the base frontend page for your iptables configuration interface.</p>
+  <button id="check">Check Backend Connection</button>
+  <pre id="output">{}</pre>
+
+<script>
+document.getElementById("check").addEventListener("click", async () => {
+  const res = await fetch("/api/status");
+  const data = await res.json();
+  document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+});
+</script>
+</body>
+</html>
