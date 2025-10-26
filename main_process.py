@@ -5,7 +5,7 @@ Serves the web interface and exposes backend API routes.
 """
 
 from flask import Flask, jsonify, send_from_directory
-import os
+import os, requests
 
 app = Flask(__name__, static_folder="app/web")
 
@@ -30,7 +30,7 @@ def api_objective():
     """
     Temporary route to test Objective Selection from frontend.
     """
-    data = request.get_json(force=True, silent=False)
+    data = requests.get_json(force=True, silent=False)
     return jsonify({
         "status": "received",
         "objective": data.get("objective"),

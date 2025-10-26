@@ -85,6 +85,84 @@
     resultBox.textContent = JSON.stringify(json, null, 2);
   });
   </script>
+
+<!-- ========== STEP 3: PACKET IDENTIFICATION PANEL ========== -->
+<section style="margin-top: 2rem; padding: 1rem; background: #1e293b; border-radius: 10px;">
+  <h2 style="color: #38bdf8;">2️⃣ Define Packet Identification</h2>
+  <p style="color: #94a3b8;">Specify the characteristics of packets you want the firewall to match.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+    <div>
+      <label><strong>Source IP:</strong></label><br>
+      <input id="src_ip" type="text" placeholder="192.168.1.10" style="width:100%; padding:8px; border-radius:6px;">
+    </div>
+
+    <div>
+      <label><strong>Destination IP:</strong></label><br>
+      <input id="dst_ip" type="text" placeholder="192.168.1.100" style="width:100%; padding:8px; border-radius:6px;">
+    </div>
+
+    <div>
+      <label><strong>Protocol:</strong></label><br>
+      <select id="protocol" style="width:100%; padding:8px; border-radius:6px;">
+        <option value="">-- Select --</option>
+        <option value="tcp">TCP</option>
+        <option value="udp">UDP</option>
+        <option value="icmp">ICMP</option>
+      </select>
+    </div>
+
+    <div>
+      <label><strong>Source Port:</strong></label><br>
+      <input id="src_port" type="number" placeholder="1024" min="1" max="65535" style="width:100%; padding:8px; border-radius:6px;">
+    </div>
+
+    <div>
+      <label><strong>Destination Port:</strong></label><br>
+      <input id="dst_port" type="number" placeholder="80" min="1" max="65535" style="width:100%; padding:8px; border-radius:6px;">
+    </div>
+  </div>
+
+  <button id="packetSubmit" style="margin-top: 1rem; background: #334155; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer;">
+    Preview Packet Match
+  </button>
+
+  <pre id="packetResult" style="background:#0f172a; padding:10px; border-radius:8px; margin-top:1rem;">{}</pre>
+</section>
+
+<script>
+// ========== PACKET IDENTIFICATION LOGIC ==========
+function validateIP(ip) {
+  return /^((25[0-5]|2[0-4]\d|[0-1]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[0-1]?\d\d?)$/.test(ip);
+}
+
+document.getElementById("packetSubmit").addEventListener("click", () => {
+  const src_ip = document.getElementById("src_ip").value.trim();
+  const dst_ip = document.getElementById("dst_ip").value.trim();
+  const protocol = document.getElementById("protocol").value.trim();
+  const src_port = document.getElementById("src_port").value.trim();
+  const dst_port = document.getElementById("dst_port").value.trim();
+
+  const errors = [];
+  if (src_ip && !validateIP(src_ip)) errors.push("Invalid Source IP");
+  if (dst_ip && !validateIP(dst_ip)) errors.push("Invalid Destination IP");
+  if (src_port && (src_port < 1 || src_port > 65535)) errors.push("Invalid Source Port");
+  if (dst_port && (dst_port < 1 || dst_port > 65535)) errors.push("Invalid Destination Port");
+
+  const result = {
+    src_ip,
+    dst_ip,
+    protocol,
+    src_port: src_port ? parseInt(src_port) : null,
+    dst_port: dst_port ? parseInt(dst_port) : null,
+    valid: errors.length === 0,
+    errors
+  };
+
+  document.getElementById("packetResult").textContent = JSON.stringify(result, null, 2);
+});
+</script>
+
 </body>
 
 </html>
