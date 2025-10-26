@@ -163,6 +163,59 @@ document.getElementById("packetSubmit").addEventListener("click", () => {
 });
 </script>
 
+<!-- ========== STEP 4: ACTION & FLOW DECISION PANEL ========== -->
+<section style="margin-top: 2rem; padding: 1rem; background: #1e293b; border-radius: 10px;">
+  <h2 style="color: #38bdf8;">3️⃣ Select Flow Decision Point</h2>
+  <p style="color: #94a3b8;">Choose where in the packet flow this rule should apply.</p>
+
+  <label><strong>Chain (Flow Stage):</strong></label><br>
+  <select id="chain" style="width:100%; padding:8px; border-radius:6px; margin-top:5px;">
+    <option value="">-- Select Chain --</option>
+    <option value="PREROUTING">PREROUTING (Before Routing)</option>
+    <option value="INPUT">INPUT (To Local System)</option>
+    <option value="FORWARD">FORWARD (Between Interfaces)</option>
+    <option value="OUTPUT">OUTPUT (From Local Process)</option>
+    <option value="POSTROUTING">POSTROUTING (After Routing)</option>
+  </select>
+
+  <button id="previewRule" style="margin-top: 1rem; background: #334155; color:white; border:none; border-radius:6px; padding:10px 16px; cursor:pointer;">
+    Preview Full Rule
+  </button>
+
+  <pre id="rulePreview" style="background:#0f172a; padding:10px; border-radius:8px; margin-top:1rem;">{}</pre>
+</section>
+
+<script>
+// ========== ACTION & FLOW DECISION LOGIC ==========
+
+document.getElementById("previewRule").addEventListener("click", () => {
+  const objective = document.getElementById("objective").value;
+  const action    = document.getElementById("action").value;
+  const src_ip    = document.getElementById("src_ip").value;
+  const dst_ip    = document.getElementById("dst_ip").value;
+  const protocol  = document.getElementById("protocol").value;
+  const src_port  = document.getElementById("src_port").value;
+  const dst_port  = document.getElementById("dst_port").value;
+  const chain    = document.getElementById("chain").value;
+
+  if (!objective || !action || !chain) {
+    alert("Please select an objective, action, and chain first.");
+    return;
+  }
+
+  // Construct a preview iptables command
+  let cmd = `iptables -t ${objective === "translate" ? "nat" : "filter"} -A ${chain}`;
+  if (src_ip) cmd += ` -s ${src_ip}`;
+  if (dst_ip) cmd += ` -d ${dst_ip}`;
+  if (protocol) cmd += ` -p ${protocol}`;
+  if (src_port) cmd += ` --sport ${src_port}`;
+  if (dst_port) cmd += ` --dport ${dst_port}`;
+  cmd += ` -j ${action.toUpperCase()}`;
+
+  document.getElementById("rulePreview").textContent = cmd;
+});
+</script>
+
 </body>
 
 </html>
